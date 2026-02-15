@@ -1,0 +1,10 @@
+:root {
+    --gray-1: rgb(163, 161, 161);
+    --gray-2: rgb(218, 217, 217);
+    --gray-3: rgb(231, 231, 231);
+    --gray-4: rgb(247, 247, 247);
+
+    --dark-gray-1: rgb(124, 124, 124);
+    --cavnas-bg: rgb(255, 255, 255);
+    --canvas-gridlines: rgb(212, 212, 212);
+}

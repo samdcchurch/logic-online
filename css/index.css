@@ -1,0 +1,13 @@
+@import "colors.css";
+@import "navbar.css";
+@import "app-layout.css";
+
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,22 @@
+.sidebar {
+    width: 200px;
+    height: 100%;
+    border-right: 2px solid var(--gray-1);
+    flex-shrink: 0;
+}
+
+.category-container {
+    width: 100%;
+    height: 175px;
+    border-bottom: 2px solid var(--gray-1);
+    display: flex;
+    flex-direction: column;
+}
+
+.category {
+    flex-grow: 1;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-left: 8px
+}
+

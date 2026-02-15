@@ -1,0 +1,11 @@
+.canvas-container{
+    flex-grow: 1;
+    border: 3px solid var(--dark-gray-1);
+}
+
+.canvas{
+    position: absolute;
+    background-image:linear-gradient(to right, var(--canvas-gridlines) 1px, transparent 1px), linear-gradient(to bottom, var(--canvas-gridlines) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-color: var(--cavnas-bg);
+}

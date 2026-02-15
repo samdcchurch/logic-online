@@ -1,0 +1,23 @@
+.navbar{
+    height: 30px;
+    display: flex;
+}
+
+.icon-container{ 
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 30px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.icon-print{
+    margin-left: 18px;
+}
+
+.icon-undo{
+    margin-left: 15px;
+}
