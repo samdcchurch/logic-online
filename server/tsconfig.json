@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "nodenext",
+        "outDir": "./dist/js",
+        "rootDir": "./src/ts",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
+        "strict": true,
+        "noEmitOnError": true,
+        "sourceMap": true
+    },
+    "include": ["src/ts/*"],
+    "exclude": ["node_modules"]
+}
