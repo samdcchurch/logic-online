@@ -29,7 +29,7 @@ const renderableObjects: Gate[] = [];
 const renderedObjects: Gate[] = [];
 
 
-const canvasContainerResizeObserver = new ResizeObserver(() => {
+new ResizeObserver(() => {
     refreshCanvasDimensions(canvas, canvasContainer);
     render(canvas, ctx);
 }).observe(canvasContainer);
