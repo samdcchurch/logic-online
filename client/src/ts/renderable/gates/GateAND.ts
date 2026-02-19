@@ -1,4 +1,5 @@
-import { Point, Renderable } from "../main.js";
+import { Point } from "../../main.js";
+import { Renderable } from "../Renderable.js";
 import { Gate } from "./Gate.js";
 
 export class GateAND implements Gate, Renderable {
