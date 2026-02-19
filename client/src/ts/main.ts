@@ -6,6 +6,79 @@ export type Point = {
     y: number;
 }
 
+export interface Renderable {
+    isOnScreen(camera: Point, canvasWidth: number, canvasHeight: number): boolean;
+    draw(ctx: CanvasRenderingContext2D, camera: Point): void;
+}
+
+interface UIElement {
+    draw(ctx: CanvasRenderingContext2D, camera: Point): void;
+}
+
+class SelectionBox implements UIElement {
+    private isActive: boolean;
+    private anchorPoint: Point;
+    private width: number;
+    private height: number;
+
+    constructor() {
+        this.isActive = false;
+        this.anchorPoint = {x: 0, y: 0};
+        this.width = 0;
+        this.height = 0;
+    }
+
+    start(anchorPoint: Point){
+        this.isActive = true;
+        this.anchorPoint = anchorPoint;
+    }
+
+    update(width: number, height: number){
+        if(this.isActive){
+            this.width = width;
+            this.height = height;
+        }
+    }
+
+    stop(){
+        this.isActive = false;
+    }
+
+    draw(ctx: CanvasRenderingContext2D, camera: Point): void {
+        if (this.isActive){
+            ctx.strokeStyle = "rgb(0, 120, 214)";
+            ctx.fillStyle = "rgba(0, 120, 214, 0.25)";
+
+            ctx.beginPath();
+            ctx.rect(this.anchorPoint.x - camera.x, this.anchorPoint.y - camera.y, this.width, this.height);
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
+
+
+}
+
+class UI {
+    elements: UIElement[] = [];
+    selectionBox: SelectionBox;
+
+    constructor(){
+        this.selectionBox = new SelectionBox();
+
+        this.elements.push(this.selectionBox);
+    }
+
+    draw(ctx: CanvasRenderingContext2D, camera: Point){
+        for (const element of this.elements){
+            element.draw(ctx, camera);
+        }
+    }
+}
+
+
+
+
 const canvas = document.getElementById("canvas");
 if (!(canvas instanceof HTMLCanvasElement)) {
     throw new Error("Canvas element not found or is not a <canvas>.");
@@ -25,38 +98,60 @@ let camera = {
     y: 0,
 }
 
-const renderableObjects: Gate[] = [];
-const renderedObjects: Gate[] = [];
+const renderableObjects: Renderable[] = [];
+const renderedObjects: Renderable[] = [];
+const ui = new UI();
 
 
 new ResizeObserver(() => {
     refreshCanvasDimensions(canvas, canvasContainer);
-    render(canvas, ctx);
+    render(canvas, ctx, ui);
 }).observe(canvasContainer);
 
 canvas.addEventListener("mousedown", (event) => {
-    const startMouse = {x: event.clientX, y: event.clientY};
-    const startCamera = {x: camera.x, y: camera.y};
+    const startCamera = {...camera};
 
     // if middle click
     if (event.button === 1){
+        const startMouse = {x: event.screenX, y: event.screenY};
+
         event.preventDefault();
         const panCamera = (event: MouseEvent) => {
-            camera.x = startCamera.x + (startMouse.x - event.clientX);
-            camera.y = startCamera.y + (startMouse.y - event.clientY);
+            camera.x = startCamera.x + (startMouse.x - event.screenX);
+            camera.y = startCamera.y + (startMouse.y - event.screenY);
             panCanvasGridlines(canvas);
-            render(canvas, ctx);
+            render(canvas, ctx, ui);
 
         }
         window.addEventListener("mousemove", panCamera);
-        window.addEventListener("mouseup", () => {
-            window.removeEventListener("mousemove", panCamera);
+        window.addEventListener("mouseup", (event) => {
+            if (event.button === 1){
+                window.removeEventListener("mousemove", panCamera);
+            }
         });
     }
 
     // if left click
     if (event.button === 0) {
+        // initial click is within canvas, so we can use offsetX/Y
+        ui.selectionBox.start({x: event.offsetX + camera.x, y: event.offsetY + camera.y});
+        // mouse may move outside canvas, so we must use screenX/Y to calculate width/height.
+        const startMouseScreen = {x: event.screenX, y: event.screenY};
+        const boxSelect = (event: MouseEvent) => {
+            const width = (event.screenX - startMouseScreen.x) + (camera.x - startCamera.x);
+            const height = (event.screenY - startMouseScreen.y) + (camera.y - startCamera.y);
 
+            ui.selectionBox.update(width, height);
+            render(canvas, ctx, ui);
+        }
+        window.addEventListener("mousemove", boxSelect);
+        window.addEventListener("mouseup", (event) => {
+            if (event.button === 0) {
+                ui.selectionBox.stop();
+                render(canvas, ctx, ui);
+                window.removeEventListener("mousemove", boxSelect);
+            }
+        });
     }
 });
 
@@ -73,7 +168,7 @@ addRenderableObject(gate2);
 
 
 
-function addRenderableObject(object: Gate) {
+function addRenderableObject(object: Renderable) {
     renderableObjects.push(object);
 }
 
@@ -88,9 +183,10 @@ function refreshCanvasDimensions(canvas: HTMLCanvasElement, canvasContainer: HTM
 
 function panCanvasGridlines(canvas: HTMLCanvasElement) {
     canvas.style.backgroundPosition = `${-camera.x}px ${-camera.y}px`;
+    // TODO: potentially add some delay to avoid "ResizeObserver loop completed with undelivered notifications." error
 }
 
-function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D){
+function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, ui: UI){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     renderedObjects.length = 0;
     for (const object of renderableObjects) {
@@ -99,4 +195,6 @@ function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D){
             renderedObjects.push(object);
         }
     }
+
+    ui.draw(ctx, camera);
 }

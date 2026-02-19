@@ -1,7 +1,7 @@
-import { Point } from "../main.js";
+import { Point, Renderable } from "../main.js";
 import { Gate } from "./Gate.js";
 
-export class GateAND implements Gate {
+export class GateAND implements Gate, Renderable {
     x: number;
     y: number;
     isSelected: boolean;
@@ -26,6 +26,8 @@ export class GateAND implements Gate {
 
     draw(ctx: CanvasRenderingContext2D, camera: Point): void {
         const relativeCenter = {x: this.x - camera.x, y: this.y - camera.y};
+
+        ctx.strokeStyle = "rgb(0, 0, 0)";
 
         if(this.isSelected){
             ctx.setLineDash([15]);
