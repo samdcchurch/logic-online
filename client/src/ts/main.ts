@@ -33,9 +33,16 @@ const renderedObjects: Renderable[] = [];
 const ui = new UI();
 
 
+let resizeScheduled = false;
 new ResizeObserver(() => {
-    refreshCanvasDimensions(canvas, canvasContainer);
-    render(canvas, ctx, ui);
+    if (!resizeScheduled){
+        resizeScheduled = true;
+        requestAnimationFrame(() => {
+            resizeScheduled = false;
+            refreshCanvasDimensions(canvas, canvasContainer);
+            render(canvas, ctx, ui);
+        });
+    }
 }).observe(canvasContainer);
 
 canvas.addEventListener("mousedown", (event) => {
