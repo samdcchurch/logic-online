@@ -14,13 +14,16 @@
   "author": "samdcchurch",
   "type": "module",
   "main": "",
+  "private": true,
+  "workspaces": [
+    "server"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:server": "npm --prefix server run build",
     "build:client": "npx tsc -p client",
     "build": "npm run build:server && npm run build:client",
-    "start:server": "npm --prefix server run start",
-    "postinstall": "npm --prefix server install"
+    "start:server": "npm --prefix server run start"
   },
   "devDependencies": {
     "typescript": "^5.9.3"
