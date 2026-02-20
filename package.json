@@ -1,5 +1,5 @@
 {
-  "name": "logic-online-server",
+  "name": "logic-online",
   "version": "1.0.0",
   "description": "",
   "homepage": "https://github.com/samdcchurch/logic-online#readme",
@@ -13,18 +13,16 @@
   "license": "ISC",
   "author": "samdcchurch",
   "type": "module",
-  "main": "dist/js/index.js",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tsc -p tsconfig.json",
-    "start": "node dist/js/index.js"
+    "build:server": "npm --prefix server run build",
+    "build:client": "npx tsc -p client",
+    "build": "npm run build:server && npm run build:client",
+    "start:server": "npm --prefix server run start",
+    "postinstall": "npm --prefix server install"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^25.2.3",
-    "nodemon": "^3.1.13"
-  },
-  "dependencies": {
-    "express": "^5.2.1"
+    "typescript": "^5.9.3"
   }
 }

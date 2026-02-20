@@ -1,6 +1,6 @@
 import express from "express"
 
-const PUBLIC_FOLDER_PATH = "/Users/sam/Documents/projects/logic-online/client/public"
+const PUBLIC_FOLDER_PATH = "D:\\Projects\\logic-online\\client\\public"
 const PORT = 3000;
 
 const app = express();
