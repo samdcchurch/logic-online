@@ -28,12 +28,16 @@ export class SelectionBox implements UIElement {
 
     stop(){
         this.isActive = false;
+        this.anchorPoint = {x: 0, y: 0};
+        this.width = 0;
+        this.height = 0;
     }
 
-    draw(ctx: CanvasRenderingContext2D, camera: Point): void {
+    draw(ctx: CanvasRenderingContext2D, camera: Point){
         if (this.isActive){
             ctx.strokeStyle = "rgb(0, 120, 214)";
             ctx.fillStyle = "rgba(0, 120, 214, 0.25)";
+            ctx.setLineDash([]);
 
             ctx.beginPath();
             ctx.rect(this.anchorPoint.x - camera.x, this.anchorPoint.y - camera.y, this.width, this.height);
@@ -41,4 +45,17 @@ export class SelectionBox implements UIElement {
             ctx.stroke();
         }
     }
+
+    getAnchorPoint(){
+        return this.anchorPoint;
+    }
+
+    getWidth(){
+        return this.width;
+    }
+
+    getHeight(){
+        return this.height;
+    }
+
 }

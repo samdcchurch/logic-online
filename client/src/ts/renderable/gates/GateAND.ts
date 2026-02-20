@@ -16,7 +16,7 @@ export class GateAND implements Gate, Renderable {
         this.isSelected = false;
     }
 
-    isOnScreen(camera: Point, canvasWidth: number, canvasHeight: number): boolean {
+    isOnScreen(camera: Point, canvasWidth: number, canvasHeight: number) {
         const topLeft = {x: this.x - GateAND.WIDTH / 2, y: this.y - GateAND.HEIGHT / 2};
         if (topLeft.x + GateAND.WIDTH <= camera.x) return false;
         if (topLeft.x >= camera.x + canvasWidth) return false;
@@ -25,7 +25,16 @@ export class GateAND implements Gate, Renderable {
         return true;
     }
 
-    draw(ctx: CanvasRenderingContext2D, camera: Point): void {
+    isFullyInBox(anchor: Point, width: number, height: number) {
+        const topLeft = {x: this.x - GateAND.WIDTH / 2, y: this.y - GateAND.HEIGHT / 2};
+        if (topLeft.x < anchor.x) return false;
+        if (topLeft.x + GateAND.WIDTH > anchor.x + width) return false;
+        if (topLeft.y < anchor.y) return false;
+        if (topLeft.y + GateAND.HEIGHT > anchor.y + height) return false;
+        return true;
+    }
+
+    draw(ctx: CanvasRenderingContext2D, camera: Point) {
         const relativeCenter = {x: this.x - camera.x, y: this.y - camera.y};
 
         ctx.strokeStyle = "rgb(0, 0, 0)";
@@ -33,6 +42,10 @@ export class GateAND implements Gate, Renderable {
         if(this.isSelected){
             ctx.setLineDash([15]);
         }
+        else {
+            ctx.setLineDash([]);
+        }
+
         ctx.beginPath();
 
         ctx.arc(relativeCenter.x, relativeCenter.y, 80, 1.5*Math.PI, 0.5*Math.PI);
@@ -49,5 +62,13 @@ export class GateAND implements Gate, Renderable {
 
         ctx.stroke();
         //console.log(`drew AND gate`);
+    }
+
+    select() {
+        this.isSelected = true;
+    }
+
+    deselect() {
+        this.isSelected = false;
     }
 }

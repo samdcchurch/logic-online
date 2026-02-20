@@ -30,6 +30,7 @@ let camera = {
 
 const renderableObjects: Renderable[] = [];
 const renderedObjects: Renderable[] = [];
+const selectedObjects: Renderable[] = [];
 const ui = new UI();
 
 
@@ -58,7 +59,6 @@ canvas.addEventListener("mousedown", (event) => {
             camera.y = startCamera.y + (startMouse.y - event.screenY);
             panCanvasGridlines(canvas);
             render(canvas, ctx, ui);
-
         }
         window.addEventListener("mousemove", panCamera);
         window.addEventListener("mouseup", (event) => {
@@ -77,8 +77,23 @@ canvas.addEventListener("mousedown", (event) => {
         const boxSelect = (event: MouseEvent) => {
             const width = (event.screenX - startMouseScreen.x) + (camera.x - startCamera.x);
             const height = (event.screenY - startMouseScreen.y) + (camera.y - startCamera.y);
-
             ui.selectionBox.update(width, height);
+
+            // translate potentially negative width, heights
+            let topLeftAnchor = {...ui.selectionBox.getAnchorPoint()};
+            let widthPos = width;
+            let heightPos = height;
+
+            if (widthPos < 0){
+                widthPos = Math.abs(widthPos);
+                topLeftAnchor.x -= widthPos;
+            }
+            if (heightPos < 0){
+                heightPos = Math.abs(heightPos);
+                topLeftAnchor.y -= heightPos;
+            }
+            selectObjects(topLeftAnchor, widthPos, heightPos);
+
             render(canvas, ctx, ui);
         }
         window.addEventListener("mousemove", boxSelect);
@@ -134,4 +149,17 @@ function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, ui: UI
     }
 
     ui.draw(ctx, camera);
+}
+
+function selectObjects(anchorPoint: Point, width: number, height: number) {
+    selectedObjects.length = 0;
+    for (const object of renderedObjects) {
+        if (object.isFullyInBox(anchorPoint, width, height)){
+            object.select();
+            selectedObjects.push(object)
+        }
+        else {
+            object.deselect();
+        }
+    }
 }
